@@ -17,17 +17,19 @@ namespace httpserver
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel(options =>
                 {
-                    
-                    options.Listen(IPAddress.Any, 443, listenOptions =>
+                    // load the SSL settings from Enviornment/Docker
+                    string pfxPath = Environment.GetEnvironmentVariable("FACTION_PFX_FILE");
+                    string pfxSecret = Environment.GetEnvironmentVariable("FACTION_PFX_PASS");
+
+                    options.Listen(IPAddress.Any, 80);
+
+                    if (System.IO.File.Exists(pfxPath))
                     {
-                        // load the SSL settings from Enviornment/Docker
-                        string pfxPath = Environment.GetEnvironmentVariable("CERTPATH");
-                        string pfxSecret = Environment.GetEnvironmentVariable("CERTSECRET");
-                        if (!string.IsNullOrEmpty(pfxPath) && !string.IsNullOrEmpty(pfxSecret))
+                        options.Listen(IPAddress.Any, 443, listenOptions =>
                         {
                             listenOptions.UseHttps(pfxPath, pfxSecret);
-                        }
-                    });
+                        });
+                    }
                 })
                 .UseStartup<Startup>();
     }
