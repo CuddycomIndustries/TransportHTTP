@@ -21,19 +21,19 @@ Finally, build and run the Docker container.
 ```
 docker build -t "transporthttp" .
 
-docker run -d -p 443:443 -e "FACTION_PFX_FILE=./opt/faction/cert.pfx" -e "FACTION_PFX_SECRET=Sup3rS3cr3t" transporthttp
+docker run -p 443:443 transporthttp
 ```
 
 If using a custom SSL certificate, you can override the default SSL Certificate Path and Secret within Docker by overriding the enviornment variables `FACTION_PFX_FILE` &
 `FACTION_PFX_SECRET` as such:
 ```
-docker run -p 443:443 transporthttp
+docker run -d -p 443:443 -e "FACTION_PFX_FILE=./opt/faction/cert.pfx" -e "FACTION_PFX_SECRET=Sup3rS3cr3t" transporthttp
 ```
 
 ---
 
 ## Customization
-The transport is designed to support basic customization of how the Http Server and Marauder Http Module communicate with each other. Defined within the `/Profile/HTTPProfile.cs` are `ClientProfile` and `ServerProfile` methods. Both profiles define how each component (Server and Module) will shape their Http requests and responses.
+The transport is designed to support basic customization of how the Http Server and Marauder module communicate with each other. Defined within the `/Profile/HTTPProfile.cs` are `ClientProfile` and `ServerProfile` methods. Both profiles define how each component (Server and Module) will shape their Http requests and responses.
 The ClientProfile is seralized and sent to the Faction API endpoint at startup during the Transports registration process. These profile settings are then injected into the Marauder transport module during payload build. 
 
 ### Server Customization
@@ -49,4 +49,4 @@ The `Headers` section define static headers that will be included in each reques
 Finally the `Payload` section define where the Faction Message payload will be located within the content, supported locations are `Cookie`, `Header`, or `Body`. In the case of `Body` the variable defined must match the variable defined in the HTML or Javascript content in the `URL` section. 
 
 ### Client Customization
-The design and configuration of the Client Profile is the same as the Server Customization, execpt these settings control how the Marauder Http Transport module behaves for all request's and where the Server should look for client side payload content. This configuration is seralized and injected into Marauder when the Http Transport module is selected during Payload creation.
+The design and configuration of the Client Profile is exactly the same as the Server Customization, execpt these settings control how the Marauder transport module behaves for all request's and where the Server should look for client side payload content. This configuration is seralized and injected into Marauder when the Http Transport module is selected during Payload creation.
