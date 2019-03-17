@@ -1,8 +1,10 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using httpserver.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,13 @@ namespace httpserver
                                          reloadOnChange: true)
                             .Build(),
              ServiceLifetime.Singleton));
+
+            // Add support for GZIP Compression
+            services.AddResponseCompression();
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Fastest;
+            });
 
             services.AddTransient<IHttpProfile, HttpProfile>();
             services.AddTransient<IEndpointHandler, EndpointHandler>();

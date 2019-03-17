@@ -1,31 +1,42 @@
 ﻿using httpserver.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace httpserver
 {
     public class HttpProfile : IHttpProfile
     {
+        private IConfiguration _configuration { get; set; }
+        private string _httpServerEndpoint { get; set; }
+        public HttpProfile(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _httpServerEndpoint = _configuration.GetValue<string>("Server:HttpServerEndpoint");
+        }
+
         public Profile ClientProfile => 
             new Profile
             {
+
                 // Client Http Get profile, used when the client has no data to post (i.e. standard checkin)
                 HttpGet = new Dictionary<string, Dictionary<string, string>>
                     {
                         {
+                            // This section defines basics information on how to talk to this Http Server
                             "Server",
                             new Dictionary<string, string>
                             {
                                 {"IgnoreSSL", "true"},
-                                {"Host", "https://localhost:44335" },
+                                {"Host", _httpServerEndpoint },
                                 {"URLs", "/faction.html" }
                             }
                         },
                         {
+                            // Set static Headers the client should send for HttpGet requests
                             "Headers",
                             new Dictionary<string, string>
                             {
@@ -49,6 +60,7 @@ namespace httpserver
                             ServerProfile.HttpGet["Payload"]
                         }
                     },
+                
                 // Client Http POST profile, used when the client is responding with data
                 HttpPost = new Dictionary<string, Dictionary<string, string>>
                     {
@@ -57,11 +69,12 @@ namespace httpserver
                             new Dictionary<string, string>
                             {
                                 {"IgnoreSSL", "true"},
-                                {"Host", "https://localhost:44335" },
+                                {"Host", _httpServerEndpoint },
                                 {"URLs", "/weather.html" }
                             }
                         },
                         {
+                            // Set static Headers the client should send for HttpPosts requests
                             "Headers",
                             new Dictionary<string, string>
                             {
@@ -71,6 +84,7 @@ namespace httpserver
                             }
                         },
                         {
+                            // Set static cookies sent with every POST operation
                             "Cookies",
                             new Dictionary<string, string>
                             {
@@ -78,6 +92,8 @@ namespace httpserver
                             }
                         },
                         {
+                            // Define where (Body, Header, or Cookies) we will stuff payload data and which
+                            // key the Server should look for the content in
                             "ClientPayload",
                             new Dictionary<string, string>
                             {
@@ -87,6 +103,8 @@ namespace httpserver
                             }
                         },
                         {
+                            // The Client needs reference to where the Server is stuffing payload data
+                            // (Headers or Body) so the client can find and decode the 
                             "ServerPayload",
                             ServerProfile.HttpPost["Payload"]
                         }
@@ -98,6 +116,9 @@ namespace httpserver
                 HttpGet = new Dictionary<string, Dictionary<string, string>>
                 {
                     {
+                        // Define which URL's are "valid" for payloads and the content of the response
+                        // For any payload data defined in Body the content must include a place to interporlate the data
+                        // based on the configruation defined Payload section below.
                         "URLs",
                         new Dictionary<string, string>
                         {
@@ -106,6 +127,7 @@ namespace httpserver
                         }
                     },
                     {
+                        // Define static headers for every Server response
                         "Headers",
                         new Dictionary<string, string>
                         {
@@ -114,6 +136,9 @@ namespace httpserver
                         }
                     },
                     {
+                        // Define where (Body or Header) we will stuff payload data and
+                        // where we should interperlate data in the content defined in URL's above.
+                        // For Body defined content the interpolation key must match
                         "Payload",
                         new Dictionary<string, string>
                         {
@@ -125,6 +150,7 @@ namespace httpserver
                 HttpPost = new Dictionary<string, Dictionary<string, string>>
                 {
                     {
+                        // Define which URL's are "valid" for receiving POST data and what the static response content should be
                         "URLs",
                         new Dictionary<string, string>
                         {
@@ -132,6 +158,7 @@ namespace httpserver
                         }
                     },
                     {
+                        // Define static response Headers for HttpPost requests
                         "Headers",
                         new Dictionary<string, string>
                         {
@@ -140,6 +167,8 @@ namespace httpserver
                         }
                     },
                     {
+                        // Define where (Header or Cookie) we will stuff payload data and
+                        // what Key the client should expect to find the payload content
                         "Payload",
                         new Dictionary<string, string>
                         {

@@ -1,8 +1,9 @@
 {
   "Server": {
-    "FactionAPIEndpoint": "https://127.0.0.1",
+    "HttpServerEndpoint":  "https://127.0.0.1",
+    "FactionAPIEndpoint": "https://52.183.13.195",
     "FactionId": "2",
-    "FactionAPIKey": "YczS...K2BayN3",
-    "FactionAPISecret": "6fJ9KNq1...V8PzI9jNn3iOSt"
+    "FactionAPIKey": "YczSgMR2MK2BayN3",
+    "FactionAPISecret": "6fJ9KNq143t9COiBEuUddb9r1hiSoh7B5UHylp-xLUyWoplNC1V8PzI9jNn3iOSt"
   }
 }
