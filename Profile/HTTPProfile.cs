@@ -97,7 +97,7 @@ namespace httpserver
                             "ClientPayload",
                             new Dictionary<string, string>
                             {
-                                { "Message", "Body::city" },
+                                { "Message", "Cookie::_cfid" },
                                 { "AgentName", "Header::x-token" },
                                 { "StageName", "Cookie::sessionId" }
                             }
@@ -142,7 +142,7 @@ namespace httpserver
                         "Payload",
                         new Dictionary<string, string>
                         {
-                            { "Message", "Body::%%MESSAGE%%" },
+                            { "Message", "Header::session-data" },
                             { "AgentName", "Header::auth-data" }
                         }
                     }
